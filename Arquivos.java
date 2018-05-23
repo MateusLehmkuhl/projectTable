@@ -32,8 +32,6 @@ public class Arquivos {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
-		//list.forEach(System.out::println);
 		return list;
 	}
 	
@@ -45,10 +43,7 @@ public class Arquivos {
 		try {
 			fw = new FileWriter(FILENAME, add);
 			bw = new BufferedWriter(fw);
-			bw.write(texto);
-			
-			System.out.println("Done");  //Debug		
-			
+			bw.write(texto);			
 		} catch (IOException e) {
 
 			e.printStackTrace();
