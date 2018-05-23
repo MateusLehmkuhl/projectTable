@@ -146,11 +146,10 @@ public class Tabela extends JFrame {
 			int linhaSelecionada = -1;
 			linhaSelecionada = tabela.getSelectedRow();
 			if (linhaSelecionada >= 0) {
-				// TODO
 				modelo.removeRow(linhaSelecionada);
 				salvarLista(modelo);
 			} else {
-				JOptionPane.showMessageDialog(null, "… neces·rio selecionar uma linha.");
+				JOptionPane.showMessageDialog(null, "√â neces√°rio selecionar uma linha.");
 			}
 		}
 	}
