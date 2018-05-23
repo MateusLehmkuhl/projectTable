@@ -3,10 +3,12 @@ package projectTable;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,10 +30,11 @@ public class Tabela extends JFrame {
 	private JButton btAtualizar;
 	private JButton btEntrada;
 	private JButton btSaida;
+	private JButton btArquivo;
 	private DefaultTableModel modelo = new DefaultTableModel();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 	String dataDeHoje;
-	
+
 	public Tabela() {
 		super("Ponto");
 		criaJTable();
@@ -45,7 +48,8 @@ public class Tabela extends JFrame {
 		btAtualizar = new JButton("Atualizar");
 		btEntrada = new JButton("Entrada");
 		btSaida = new JButton("Saida");
-		
+		btArquivo = new JButton("Arquivo");
+
 		painelBotoes = new JPanel();
 		painelBotoes2 = new JPanel();
 		barraRolagem = new JScrollPane(tabela);
@@ -55,11 +59,12 @@ public class Tabela extends JFrame {
 		painelBotoes.add(btInserir);
 		painelBotoes.add(btSalvar);
 		painelBotoes.add(btExcluir);
-	
+		painelBotoes.add(btArquivo);
+
 		painelBotoes2.add(btEntrada);
 		painelBotoes2.add(btSaida);
 		painelBotoes2.add(btAtualizar);
-		
+
 		painelFundo.add(BorderLayout.SOUTH, painelBotoes2);
 		painelFundo.add(BorderLayout.NORTH, painelBotoes);
 
@@ -73,6 +78,7 @@ public class Tabela extends JFrame {
 		btSalvar.addActionListener(new BtSalvarListener());
 		btEntrada.addActionListener(new BtEntradaListener());
 		btSaida.addActionListener(new BtSaidaListener());
+		btArquivo.addActionListener(new BtArquivoListener());
 	}
 
 	private void criaJTable() {
@@ -93,36 +99,38 @@ public class Tabela extends JFrame {
 			modelo.addRow(new Object[] { c.substring(0, 10), c.substring(11, 16), c.substring(17) });
 		}
 	}
-	
+
 	public void salvarLista(DefaultTableModel modelo) {
 		Arquivos arq = new Arquivos();
-		arq.escrever("",false);
-		for(int i=0;i<modelo.getRowCount();i++) {
-			for(int j = 0;j<3;j++) {
-				arq.escrever((String)tabela.getValueAt(i, j),true);
-				arq.escrever(" ",true);
+		arq.escrever("", false);
+		for (int i = 0; i < modelo.getRowCount(); i++) {
+			for (int j = 0; j < 3; j++) {
+				arq.escrever((String) tabela.getValueAt(i, j), true);
+				arq.escrever(" ", true);
 			}
 			arq.escrever("\n", true);
 		}
 	}
-	
+
 	private class BtInserirListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			modelo.addRow(new Object[] {"          ","       "," "});
+			modelo.addRow(new Object[] { "          ", "       ", " " });
 		}
 	}
+
 	private class BtEntradaListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Arquivos arquivo = new Arquivos();
-			dataDeHoje  = dateFormat.format(new Date());
-			arquivo.escrever(dataDeHoje+" E\n", true);
+			dataDeHoje = dateFormat.format(new Date());
+			arquivo.escrever(dataDeHoje + " E\n", true);
 			atualizar(modelo);
 		}
 	}
+
 	private class BtSaidaListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Arquivos arquivo = new Arquivos();
-			dataDeHoje  = dateFormat.format(new Date());
+			dataDeHoje = dateFormat.format(new Date());
 			arquivo.escrever(dataDeHoje + " S\n", true);
 			atualizar(modelo);
 		}
@@ -133,7 +141,25 @@ public class Tabela extends JFrame {
 			atualizar(modelo);
 		}
 	}
-	
+
+	private class BtArquivoListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Arquivos arquivo = new Arquivos();
+			JFileChooser fileChooser = new JFileChooser();
+			int retorno = fileChooser.showOpenDialog(null);
+
+			if (retorno == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				String f = file.toString();
+				arquivo.setFilename(f);
+			} else {
+				System.err.println("Não foi possível selecionar o arquivo");
+				return;
+			}
+			atualizar(modelo);
+		}
+	}
+
 	private class BtSalvarListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			salvarLista(modelo);
@@ -149,7 +175,7 @@ public class Tabela extends JFrame {
 				modelo.removeRow(linhaSelecionada);
 				salvarLista(modelo);
 			} else {
-				JOptionPane.showMessageDialog(null, "Ã‰ necesÃ¡rio selecionar uma linha.");
+				JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
 			}
 		}
 	}
